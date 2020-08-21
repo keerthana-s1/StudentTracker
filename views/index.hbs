@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            input:focus {
+  border: 3px solid #555;
+}
+
+input {
+  width: 30%;
+  padding: 6px 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid #ccc;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+}
+input[type = submit]{
+     background-color: #44cfc1;
+  border-radius: 0%;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  margin: 2px 1px;
+  cursor: pointer;
+}
+button {
+  background-color: #44cfc1;
+  border-radius: 0%;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  margin: 2px 1px;
+  cursor: pointer;
+}
+        </style>
+    </head>
+    <body onload="func()">
+        <header><h1>Student Tracker</h1></header>
+       
+        <hr style="border-top: 3px solid #bbb">
+        <h3>Find</h3>
+        <div id="queryf"> <label for="query">Enter Detail</label><br>
+            <input type="text" id="query" name="query" value="" oninput="typed(value)"> 
+            <button onclick="find()">Find</button></div>
+           
+        
+          <div id="result">{{result}}</div>
+        <hr style="border-top: 3px solid #bbb">
+        <form action="http://localhost:3000/addstudent" method="POST">
+        <h3>Add a Student Detail</h3>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="Name" value=""><br>
+            <label for="rno">Roll Number:</label><br>
+            <input type="number" id="rno" name="rno" value=""><br><br>
+            <input type="submit" value="Submit">
+          </form> 
+          <hr style="border-top: 3px solid #bbb">
+          <form action="http://localhost:3000/updatestudent" method="POST">
+        <h3> Update a Student Detail</h3>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name2" name="Name" value=""><br>
+            <label for="rno">Roll Number:</label><br>
+            <input type="number" id="rno2" name="rno" value=""><br><br>
+            <label for="name">New Name:</label><br>
+            <input type="text" id="nname" name="nName" value=""><br>
+            <label for="rno">New Roll Number:</label><br>
+            <input type="number" id="nrno" name="nrno" value=""><br><br>
+            <input type="submit" value="Update">
+          </form> 
+          <hr style="border-top: 3px solid #bbb">
+          <form action="http://localhost:3000/delstudent" method="POST">
+        <h3>Delete a Student Detail</h3>
+            <label for="rno">Roll Number:</label><br>
+            <input type="number" id="rno3" name="rno" value=""><br><br>
+            <input type="submit" value="Delete">
+          </form> 
+          <hr style="border-top: 3px solid #bbb">
+
+        <script  >
+            var sno
+            function typed(value) {
+                
+                //console.log(sno)
+                var data = new XMLHttpRequest();
+                data.open('GET','http://localhost:3000/auto',true)
+                data.setRequestHeader('txt',value)
+                //console.log('before')
+                for(i=0;i<sno;i++)
+                {
+                    document.getElementById(i).remove(); 
+                }
+                data.onload = function() {
+               //console.log(this.response)
+               cats= JSON.parse(this.response)
+                sno=0
+               cats.forEach( (name)=> {
+               console.log(name)
+               //sno++
+               var a = document.createElement('DIV')
+              a.innerHTML=name
+              a.style = "cursor : pointer"
+              a.id=sno
+              //console.log('id',a.id)
+              a.addEventListener('click', function() {
+             document.getElementById("query").value = name
+
+              
+               }, false);
+              document.getElementById("queryf").appendChild(a)
+              sno++
+              //document.getElementById(sno-1).remove();
+               })
+              
+            }
+            data.send()
+            }
+            function func()
+            {    var data = new XMLHttpRequest();
+            data.open('GET','http://localhost:3000/result',true)
+            data.onload = function() {
+               // document.getElementById("message").innerHTML = this.responseText
+
+            }
+            data.send()
+
+            }
+
+        function loadhome() 
+        {   
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','http://localhost:3000/addstudent',true)
+            xhr.send();
+        }
+
+        function getresult()
+        {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','http://localhost:3000/',true)
+            xhr.onload = function(){
+               console.log(this.responseText)
+            }
+            xhr.send();
+           
+        }
+        function find() {
+             var data = new XMLHttpRequest();
+              for(i=0;i<sno;i++)
+                {
+                    document.getElementById(i).remove(); 
+                }
+            data.open('GET','http://localhost:3000/result',true)
+           data.setRequestHeader('Query',document.getElementById("query").value) 
+           data.onload = function() {
+              var chec =  JSON.parse((data.response))
+               console.log(chec)
+               document.getElementById("result").innerHTML ="Name :" + chec.Name +"<br>" + "R.No:" + chec.rno + "<br>"
+           }
+            data.send()
+
+        }
+        </script>
+    </body>
+</html>
